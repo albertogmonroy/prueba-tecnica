@@ -12,6 +12,7 @@ import { useBlogStore } from "../../hooks/blog/useBlogStore";
 import { useUiStore } from "../../hooks/ui/useUiStore";
 import { Post } from "../../interface/blog/blogInterface";
 import { DetalleEntrada } from "./detalleEntrada";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 
 interface FormData {
   buscar: string;
@@ -19,7 +20,8 @@ interface FormData {
 export const BlogView = () => {
   const [showNewPostForm, setShowNewPostForm] = useState(false);
   const methods = useForm<FormData>();
-  const { lstPost, startGetEntradas } = useBlogStore();
+  const { lstPost, isFilter, startGetEntradas, setFilteredLst, onFilter } =
+    useBlogStore();
   const { isOnline } = useUiStore();
   const handleNewPostClick = () => {
     setShowNewPostForm(true);
@@ -36,11 +38,27 @@ export const BlogView = () => {
         post.autor.toLowerCase().includes(searchTerm) ||
         post.contenido.toLowerCase().includes(searchTerm)
     );
-
-    console.log(filtered);
+    setFilteredLst(filtered);
+    onFilter(true);
   };
+  useEffect(() => {
+    if (methods.watch("buscar")) {
+      onSubmit({ buscar: methods.watch("buscar") });
+    }else{
+      onFilter(false);
+      startGetEntradas();
+    }/* eslint-disable-next-line */
+  }, [methods.watch("buscar")]);
   const handleBlur = () => {
+    if (isFilter && !lstPost?.length) {
+      onFilter(false);
+      startGetEntradas();
+    }
     methods.clearErrors("buscar");
+  };
+  const onResetFilter = () => {
+    onFilter(false);
+    startGetEntradas();
   };
   useEffect(() => {
     startGetEntradas(); /* eslint-disable-next-line */
@@ -108,11 +126,24 @@ export const BlogView = () => {
                 fullWidth
                 InputProps={{
                   endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton color="primary" type="submit">
-                        <SearchIcon />
-                      </IconButton>
-                    </InputAdornment>
+                    <>
+                      <InputAdornment position="end">
+                        <IconButton color="primary" type="submit">
+                          <SearchIcon />
+                        </IconButton>
+                      </InputAdornment>
+                      {isFilter ? (
+                        <InputAdornment position="end">
+                          <IconButton
+                            color="primary"
+                            type="button"
+                            onClick={onResetFilter}
+                          >
+                            <RestartAltIcon />
+                          </IconButton>
+                        </InputAdornment>
+                      ) : null}
+                    </>
                   ),
                 }}
               />

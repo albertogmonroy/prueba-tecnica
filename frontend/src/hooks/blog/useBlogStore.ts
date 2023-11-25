@@ -1,6 +1,7 @@
 import moment from "moment";
 import { Post, RequestSavePost } from "../../interface/blog/blogInterface";
 import {
+  onChangeFilter,
   onChangeModal,
   onLoadDetalle,
   onLoadDetalleNoConection,
@@ -17,9 +18,8 @@ import Swal from "sweetalert2";
 
 export const useBlogStore = () => {
   const dispatch = useAppDispatch();
-  const { dialog, lstPost, detalle, detalleNoConection } = useAppSelector(
-    (state) => state.blogSlice
-  );
+  const { dialog, lstPost, detalle, detalleNoConection, isFilter } =
+    useAppSelector((state) => state.blogSlice);
   const setModal = () => {
     dispatch(onChangeModal());
   };
@@ -68,6 +68,20 @@ export const useBlogStore = () => {
         console.log(err);
       });
   };
+  const setFilteredLst = (data: Post[]) => {
+    if (data.length) {
+      dispatch(onLoadEntradas(data));
+    } else {
+      Swal.fire({
+        title: `No se encontraron coincidencias`,
+        text: "Hubo un problema",
+        icon: "warning",
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#6e7881",
+        html: `Los parámetros ingresados no arrojaron coincidencias`,
+      });
+    }
+  };
   const startGetDetalleEntrada = (id: number) => {
     getDetalleEntradaService(id)
       .then(({ data }) => {
@@ -84,10 +98,15 @@ export const useBlogStore = () => {
   const onLoadDetalleLocal = (post: Post) => {
     dispatch(onLoadDetalleNoConection(post));
   };
+  const onFilter = (pValue: boolean) => {
+    dispatch(onChangeFilter(pValue));
+  };
   const saveEntrada = (id: number) => {
     getDetalleEntradaService(id)
       .then(({ data }) => {
-        const posts = JSON.parse(localStorage.getItem("downloadedPosts") || "[]");
+        const posts = JSON.parse(
+          localStorage.getItem("downloadedPosts") || "[]"
+        );
         const postExists = posts.some((post: Post) => post.id === id);
         if (!postExists) {
           posts.push(data);
@@ -107,6 +126,7 @@ export const useBlogStore = () => {
     lstPost,
     detalle,
     detalleNoConection,
+    isFilter,
     setModal,
     postBlog,
     savePost,
@@ -115,5 +135,7 @@ export const useBlogStore = () => {
     onResetDetalle,
     onLoadDetalleLocal,
     saveEntrada,
+    setFilteredLst,
+    onFilter,
   };
 };

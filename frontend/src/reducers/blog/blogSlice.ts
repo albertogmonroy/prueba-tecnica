@@ -8,6 +8,7 @@ export const blogSlice = createSlice({
     lstPost: [],
     detalle: null,
     detalleNoConection: null,
+    isFilter: false,
   } as BlogState,
   reducers: {
     onChangeModal: (state) => {
@@ -28,10 +29,14 @@ export const blogSlice = createSlice({
     onLoadDetalleNoConection: (state, { payload }) => {
       state.detalleNoConection = payload;
     },
+    onChangeFilter: (state, { payload }) => {
+      state.isFilter = payload;
+    },
   },
 });
 
 export const {
+  onChangeFilter,
   onChangeModal,
   onLoadDetalle,
   onLoadDetalleNoConection,

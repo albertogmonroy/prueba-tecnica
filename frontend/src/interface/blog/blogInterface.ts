@@ -4,6 +4,7 @@ export interface BlogState {
   lstPost: Post[];
   detalle: ResponseRequestSavePost | null;
   detalleNoConection: Post | null;
+  isFilter: boolean;
 }
 /* Interfaz para mandejo de componente de Blog */
 export interface Post {
