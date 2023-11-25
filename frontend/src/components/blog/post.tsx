@@ -1,12 +1,14 @@
+import { Post } from "../../interface/blog/blogInterface";
+import { styled } from "@mui/system";
+import { useUiStore } from "../../hooks/ui/useUiStore";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
 import GetAppIcon from "@mui/icons-material/GetApp";
+import IconButton from "@mui/material/IconButton";
+import InfoIcon from "@mui/icons-material/Info";
 import Tooltip from "@mui/material/Tooltip";
-import { styled } from "@mui/system";
-import { Post } from "../../interface/blog/blogInterface";
-import { useUiStore } from "../hooks/ui/useUiStore";
+import Typography from "@mui/material/Typography";
+import { useBlogStore } from "../../hooks/blog/useBlogStore";
 
 const StyledCard = styled(Card)({
   transition: "box-shadow 0.3s",
@@ -51,19 +53,23 @@ const DownloadButton = styled(IconButton)({
   top: 0,
   right: 0,
 });
+const ViewDetailButton = styled(IconButton)({
+  position: "absolute",
+  top: 0,
+  left: 0,
+});
 
-export const PostCard = ({ titulo, autor, fecha, contenido }: Post) => {
+export const PostCard = ({ id, titulo, autor, fecha, contenido }: Post) => {
   const { isOnline } = useUiStore();
+  const { startGetDetalleEntrada, onLoadDetalleLocal, saveEntrada } =
+    useBlogStore();
   const handleDownload = () => {
-    const postInfo = {
-      titulo,
-      autor,
-      fecha,
-      contenido,
-    };
+    saveEntrada(id);
+  };
+  const handleViewDetail = () => {
     const posts = JSON.parse(localStorage.getItem("downloadedPosts") || "[]");
-    posts.push(postInfo);
-    localStorage.setItem("downloadedPosts", JSON.stringify(posts));
+    const postExists = posts.find((post: Post) => post.id === id);    
+    isOnline ? startGetDetalleEntrada(id) : onLoadDetalleLocal(postExists);
   };
 
   return (
@@ -75,12 +81,19 @@ export const PostCard = ({ titulo, autor, fecha, contenido }: Post) => {
         </MetaInfo>
         <ContentPreview color="textSecondary">{contenido}</ContentPreview>
         {isOnline ? (
-          <Tooltip title="Descargar" arrow>
-            <DownloadButton onClick={handleDownload} size="small">
-              <GetAppIcon />
-            </DownloadButton>
-          </Tooltip>
+          <>
+            <Tooltip title="Descargar" arrow>
+              <DownloadButton onClick={handleDownload} size="small">
+                <GetAppIcon />
+              </DownloadButton>
+            </Tooltip>
+          </>
         ) : null}
+        <Tooltip title="Ver Detalle" arrow>
+          <ViewDetailButton onClick={handleViewDetail} size="small">
+            <InfoIcon />
+          </ViewDetailButton>
+        </Tooltip>
       </StyledCardContent>
     </StyledCard>
   );

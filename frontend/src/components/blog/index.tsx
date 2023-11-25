@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
@@ -8,15 +8,18 @@ import { FormInputText } from "../ui/FormInputText";
 import { IconButton, InputAdornment, Typography, Paper } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { FormProvider, useForm } from "react-hook-form";
-import { useBlogStore } from "../hooks/blog/useBlogStore";
-import { useUiStore } from "../hooks/ui/useUiStore";
+import { useBlogStore } from "../../hooks/blog/useBlogStore";
+import { useUiStore } from "../../hooks/ui/useUiStore";
+import { Post } from "../../interface/blog/blogInterface";
+import { DetalleEntrada } from "./detalleEntrada";
+
 interface FormData {
   buscar: string;
 }
 export const BlogView = () => {
   const [showNewPostForm, setShowNewPostForm] = useState(false);
   const methods = useForm<FormData>();
-  const { lstPost } = useBlogStore();
+  const { lstPost, startGetEntradas } = useBlogStore();
   const { isOnline } = useUiStore();
   const handleNewPostClick = () => {
     setShowNewPostForm(true);
@@ -28,7 +31,7 @@ export const BlogView = () => {
   const onSubmit = (data: FormData) => {
     const searchTerm = data.buscar.toLowerCase();
     const filtered = lstPost.filter(
-      (post) =>
+      (post: Post) =>
         post.titulo.toLowerCase().includes(searchTerm) ||
         post.autor.toLowerCase().includes(searchTerm) ||
         post.contenido.toLowerCase().includes(searchTerm)
@@ -39,6 +42,9 @@ export const BlogView = () => {
   const handleBlur = () => {
     methods.clearErrors("buscar");
   };
+  useEffect(() => {
+    startGetEntradas(); /* eslint-disable-next-line */
+  }, []);
 
   return (
     <Container>
@@ -117,6 +123,7 @@ export const BlogView = () => {
           <BlogList entries={lstPost} />
         </Grid>
       </Grid>
+      <DetalleEntrada />
     </Container>
   );
 };

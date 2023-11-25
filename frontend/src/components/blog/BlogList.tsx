@@ -3,12 +3,12 @@
 import { Typography } from "@mui/material";
 import { PostCard } from "./post";
 import Grid from "@mui/material/Grid";
-import { useUiStore } from "../hooks/ui/useUiStore";
 import { Post } from "../../interface/blog/blogInterface";
+import { useUiStore } from "../../hooks/ui/useUiStore";
 
 interface BlogListProps {
   entries: Array<{
-    id?: number;
+    id: number;
     titulo: string;
     autor: string;
     fecha: string;
@@ -29,6 +29,7 @@ export const BlogList = ({ entries }: BlogListProps) => {
           <Grid item key={`key${index}`} xs={12} sm={12} md={12}>
             <PostCard
               key={`key${index}`}
+              id={entry.id}
               titulo={entry.titulo}
               autor={entry.autor}
               fecha={entry.fecha}
@@ -51,6 +52,7 @@ export const BlogList = ({ entries }: BlogListProps) => {
           <Grid item key={`key${index}`} xs={12} sm={12} md={12}>
             <PostCard
               key={`key${index}`}
+              id={entry.id}
               titulo={entry.titulo}
               autor={entry.autor}
               fecha={entry.fecha}

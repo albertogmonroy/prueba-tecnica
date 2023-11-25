@@ -1,5 +1,4 @@
-// NewPostForm.tsx
-
+import moment from "moment";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -7,9 +6,9 @@ import { FormInputText } from "../ui/FormInputText";
 import { FormInputTextArea } from "../ui/FormInputTextArea";
 import { FormProvider, useForm } from "react-hook-form";
 import { Grid, Typography } from "@mui/material";
-import { useBlogStore } from "../hooks/blog/useBlogStore";
-import { Post } from "../../interface/blog/blogInterface";
+import { RequestSavePost } from "../../interface/blog/blogInterface";
 import { FormCalendar } from "../ui/FormCalendar";
+import { useBlogStore } from "../../hooks/blog/useBlogStore";
 
 interface NewPostFormProps {
   onClose: () => void;
@@ -17,18 +16,21 @@ interface NewPostFormProps {
 
 interface FormData {
   titulo: string;
-  fecha: Date | string;
+  fechaPublicacion: Date | string;
   autor: string;
   contenido: string;
 }
 
 export const NewPostForm = ({ onClose }: NewPostFormProps) => {
   const methods = useForm<FormData>();
-  const { postBlog } = useBlogStore();
+  const { savePost } = useBlogStore();
 
   const onSubmit = (data: FormData) => {
-    data.fecha = data.fecha.toLocaleString();
-    postBlog(data as Post);
+    data.fechaPublicacion = moment(data.fechaPublicacion).format(
+      "DD/MM/YYYY HH:mm:ss"
+    );
+
+    savePost(data as RequestSavePost);
     methods.reset();
     onClose();
   };
@@ -92,8 +94,8 @@ export const NewPostForm = ({ onClose }: NewPostFormProps) => {
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <FormCalendar
-                    name="fecha"
-                    label="Fecha"
+                    name="fechaPublicacion"
+                    label="Fecha Publicación"
                     fullWidth
                     rules={{
                       required: {

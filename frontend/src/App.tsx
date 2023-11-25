@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import "./App.css";
 import { BlogView } from "./components/blog";
-import { useUiStore } from "./components/hooks/ui/useUiStore";
+import { useUiStore } from "./hooks/ui/useUiStore";
 
 function App() {
-  const { changeModeConection } = useUiStore();
+  const { changeModeConection } = useUiStore();  
   const checkOnlineStatus = () => {
     if (navigator.onLine) {
       changeModeConection(true);

@@ -1,5 +1,5 @@
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers";
+import {  DateTimePicker } from "@mui/x-date-pickers";
 import { Controller, useFormContext } from "react-hook-form";
 import { PropsInterface } from "../../interface/ui/uiInterface";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -19,10 +19,11 @@ export const FormCalendar = ({
       control={control}
       render={({ field: { onChange, value } }) => (
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
-          <DatePicker
-            format="dd/MM/yyyy"
-            label={label}
+          <DateTimePicker
+            format="dd/MM/yyyy HH:mm"
+            label={label}            
             {...props}
+            timezone="Mexico/General"
             value={value || null}
             /* eslint-disable */
             onChange={(date: any) => onChange(date)}
